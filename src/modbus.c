@@ -75,7 +75,11 @@ void print_modbus_packet(t_ModbusPacket *pak)
 	switch(pak->f_id)
 	{
 		case 0x0f:
-			printf("  %s(%d,%d-%d)\n", MODBUS_FUNC_NAMES[pak->f_id], pak->t_id, pak->data.write_coils.write_start, pak->data.write_coils.write_length - pak->data.write_coils.write_start);
+			printf("  %s(%d,%d-%d,0x%x)\n",
+				MODBUS_FUNC_NAMES[pak->f_id], pak->t_id,
+				pak->data.write_coils.write_start,
+				pak->data.write_coils.write_length - pak->data.write_coils.write_start,
+				pak->data.write_coils.coils[0] & 0xff);
 			break;
 		default:
 			printf("  %s()\n", MODBUS_FUNC_NAMES[pak->f_id]);
