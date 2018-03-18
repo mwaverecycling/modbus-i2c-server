@@ -19,7 +19,7 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
 
 INC_FLAGS = -I$(SRC_DIR) -I$(INC_DIR)
-INC_LIB = -Wl,-Bstatic -li2cdevices
+INC_LIB = /usr/local/lib/libi2cdevices.a
 ifeq ($(OS),Darwin)
 	INC_FLAGS += -I$(INC_DIR_HACK)
 endif
