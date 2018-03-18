@@ -19,16 +19,14 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
 
 INC_FLAGS = -I$(SRC_DIR) -I$(INC_DIR)
-INC_LIB = 
+INC_LIB = -Wl,-Bstatic -li2cdevices
 ifeq ($(OS),Darwin)
 	INC_FLAGS += -I$(INC_DIR_HACK)
-else
-	INC_LIB += libi2cdevices.a
 endif
 
 
 build: build_obj
-	$(CC) -o $(TARGET_MAIN) $(OBJECTS) $(INC_LIB)
+	$(CC) -o $(TARGET_MAIN) $(OBJECTS) $(INC_LIB) 
 
 build_obj: $(OBJECTS) $(HEADERS)
 	@echo $(OBJECTS)
