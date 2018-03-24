@@ -38,8 +38,6 @@ int main(int argc, char const *argv[])
 {
 	i2c_adapter = i2c_init();
 	pca9555_config_output_range(i2c_adapter, 0x20, 0, 8);
-	pca9555_config_input_range(i2c_adapter, 0x20, 8, 16);
-	pca9555_config_input_range(i2c_adapter, 0x21, 0, 8);
 	pca9555_config_output_range(i2c_adapter, 0x21, 8, 16);
 
 	int server_sock = init_modbus_server(MODBUS_PORT);
