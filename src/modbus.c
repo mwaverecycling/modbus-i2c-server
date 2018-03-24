@@ -55,33 +55,36 @@ int serialize_packet(t_ModbusPacket *packet)
 		case 0x0f:
 			serialize_short(&packet->data.write_coils.write_start);
 			serialize_short(&packet->data.write_coils.write_length);
-			return length;
+			break;
 	}
-	return -1;
+	return length;
 }
 int serialize_response_packet(t_ModbusPacket *packet)
 {
+	serialize_packet(packet);
 	switch(packet->f_id)
 	{
-		case 0x0f:
-			serialize_packet(packet);
-			return ModbusWriteCoilsResponsePacket_SIZE;
+		case 0x01: return ModbusReadCoilsResponsePacket_SIZE + packet->data.read_coils_res.byte_length;
+		case 0x0f: return ModbusWriteCoilsResponsePacket_SIZE;
 	}
 	return -1;
 }
 
 void print_modbus_packet(t_ModbusPacket *pak)
 {
+	printf("  %s(%d, %d", MODBUS_FUNC_NAMES[pak->f_id], pak->t_id, pak->u_id);
 	switch(pak->f_id)
 	{
+		case 0x01:
+			printf(", %d-%d",
+				pak->data.read_coils.read_start,
+				pak->data.read_coils.read_start + pak->data.read_coils.read_length);
 		case 0x0f:
-			printf("  %s(%d,%d-%d,0x%x)\n",
-				MODBUS_FUNC_NAMES[pak->f_id], pak->t_id,
+			printf(", %d-%d, 0x%x",
 				pak->data.write_coils.write_start,
-				pak->data.write_coils.write_length - pak->data.write_coils.write_start,
+				pak->data.write_coils.write_start + pak->data.write_coils.write_length,
 				pak->data.write_coils.coils[0] & 0xff);
 			break;
-		default:
-			printf("  %s()\n", MODBUS_FUNC_NAMES[pak->f_id]);
 	}
+	printf(")\n");
 }

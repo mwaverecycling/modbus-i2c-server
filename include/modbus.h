@@ -34,6 +34,21 @@ struct s_ModbusWriteCoilsResponsePacket
 	unsigned short write_start;
 	unsigned short write_length;
 };
+
+struct s_ModbusReadCoilsPacket
+{
+	unsigned short read_start;
+	unsigned short read_length;
+};
+#define ModbusReadCoilsResponsePacket_SIZE 12
+struct s_ModbusReadCoilsResponsePacket
+{
+	unsigned char byte_length;
+	unsigned char coils[MODBUS_PACKET_MAX_LENGTH - 9];
+};
+
+
+
 typedef struct s_ModbusPacket
 {
 	unsigned short t_id;
@@ -44,6 +59,8 @@ typedef struct s_ModbusPacket
 	union {
 		struct s_ModbusWriteCoilsPacket write_coils;
 		struct s_ModbusWriteCoilsResponsePacket write_coils_res;
+		struct s_ModbusReadCoilsPacket read_coils;
+		struct s_ModbusReadCoilsResponsePacket read_coils_res;
 	} data;
 } t_ModbusPacket;
 
