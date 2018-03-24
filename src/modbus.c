@@ -20,6 +20,10 @@ void parse_packet_function(const unsigned char *buffer, t_ModbusPacket *packet)
 {
 	switch(packet->f_id)
 	{
+		case 0x01:
+			packet->data.read_coils.read_start = parse_short(&buffer[8]);
+			packet->data.read_coils.read_length = parse_short(&buffer[10]);
+			break;
 		case 0x0f:
 			packet->data.write_coils.write_start = parse_short(&buffer[8]);
 			packet->data.write_coils.write_length = parse_short(&buffer[10]);
