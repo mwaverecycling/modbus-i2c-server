@@ -19,6 +19,7 @@
 "INVALID_FUNCTION[0E]",\
 "WRITE_COILS"}
 
+#define MODBUS_PACKET_MIN_LENGTH 6
 #define MODBUS_PACKET_MAX_LENGTH 256
 
 struct s_ModbusWriteCoilsPacket
@@ -40,7 +41,7 @@ struct s_ModbusReadCoilsPacket
 	unsigned short read_start;
 	unsigned short read_length;
 };
-#define ModbusReadCoilsResponsePacket_SIZE 12
+#define ModbusReadCoilsResponsePacket_SIZE 9
 struct s_ModbusReadCoilsResponsePacket
 {
 	unsigned char byte_length;
