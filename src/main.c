@@ -21,15 +21,19 @@ void handle_write_coils(t_ModbusPacket *packet)
 }
 void handle_read_coils(t_ModbusPacket *packet)
 {
-	int read_start = packet->data.write_coils.write_start;
-	int read_length = packet->data.write_coils.write_length;
+	int read_start = packet->data.read_coils.read_start;
+	int read_length = packet->data.read_coils.read_length;
 	int i2c_address = packet->u_id;
 	
 	unsigned char coil_buffer[2];
 	tI2C_Status status = pca9555_read_input(i2c_adapter, i2c_address, coil_buffer);
+
+	coil_buffer[0] = (coil_buffer[0] >> read_start) | (coil_buffer[1] << (8 - read_start));
+	coil_buffer[1] = coil_buffer[1] >> read_start;
+
 	if(status < 0) { printf("  Failed to Read I2C Input!\n"); }
 	else { printf("  Success: "); print_modbus_packet(packet); }
-	packet->data.read_coils_res.byte_length = 2;
+	packet->data.read_coils_res.byte_length = read_length >> 3;
 	packet->data.read_coils_res.coils[0] = coil_buffer[0];
 	packet->data.read_coils_res.coils[1] = coil_buffer[1];
 }
