@@ -20,9 +20,13 @@ void parse_packet_function(const unsigned char *buffer, t_ModbusPacket *packet)
 {
 	switch(packet->f_id)
 	{
-		case 0x01:
+		case 0x01: case 0x02:
 			packet->data.read_coils.read_start = parse_short(&buffer[8]);
 			packet->data.read_coils.read_length = parse_short(&buffer[10]);
+			break;
+		case 0x03: case 0x04:
+			packet->data.read_registers.read_start = parse_short(&buffer[8]);
+			packet->data.read_registers.read_length = parse_short(&buffer[10]);
 			break;
 		case 0x0f:
 			packet->data.write_coils.write_start = parse_short(&buffer[8]);
@@ -68,15 +72,17 @@ int serialize_response_packet(t_ModbusPacket *packet)
 	int length = -1;
 	switch(packet->f_id)
 	{
-		case 0x01:
-			packet->length = ModbusReadCoilsResponsePacket_SIZE + packet->data.read_coils_res.byte_length - MODBUS_PACKET_MIN_LENGTH;
-			length = ModbusReadCoilsResponsePacket_SIZE + packet->data.read_coils_res.byte_length;
+		case 0x01: case 0x02:
+			length = MODBUS_PACKET_READ_MIN_LENGTH + packet->data.read_coils_res.byte_length;
+			break;
+		case 0x03: case 0x04:
+			length = MODBUS_PACKET_READ_MIN_LENGTH + packet->data.read_registers_res.byte_length;
 			break;
 		case 0x0f:
-			packet->length = ModbusWriteCoilsResponsePacket_SIZE - MODBUS_PACKET_MIN_LENGTH;
 			length = ModbusWriteCoilsResponsePacket_SIZE;
 			break;
 	}
+	packet->length = length - MODBUS_PACKET_MIN_LENGTH;
 	serialize_packet(packet);
 	return length;
 }
@@ -86,10 +92,15 @@ void print_modbus_packet(t_ModbusPacket *pak)
 	printf("  %s(%d, %d", MODBUS_FUNC_NAMES[pak->f_id], pak->t_id, pak->u_id);
 	switch(pak->f_id)
 	{
-		case 0x01:
+		case 0x01: case 0x02:
 			printf(", %d-%d",
 				pak->data.read_coils.read_start,
 				pak->data.read_coils.read_start + pak->data.read_coils.read_length);
+				break;
+		case 0x03: case 0x04:
+			printf(", %d-%d",
+				pak->data.read_registers.read_start,
+				pak->data.read_registers.read_start + pak->data.read_registers.read_length);
 				break;
 		case 0x0f:
 			printf(", %d-%d, 0x%x",

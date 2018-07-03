@@ -12,8 +12,6 @@
 
 #define BUFF_SIZE 256
 
-
-
 static void (*handlers[64])(t_ModbusPacket*) = {0};
 
 void register_modbus_handler(unsigned char func_code, void (*handler)(t_ModbusPacket*))
@@ -23,7 +21,6 @@ void register_modbus_handler(unsigned char func_code, void (*handler)(t_ModbusPa
 
 int handle_modbus_packet(t_ModbusPacket *packet, int socket)
 {
-	//print_modbus_packet(packet);
 	if(handlers[packet->f_id] == NULL) { printf("  Modbus Function %d Unsupported!\n", packet->f_id); }
 	else { (*handlers[packet->f_id])(packet); }
 	int length = serialize_response_packet(packet);

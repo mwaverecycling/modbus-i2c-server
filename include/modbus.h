@@ -21,7 +21,35 @@
 
 #define MODBUS_PACKET_MIN_LENGTH 6
 #define MODBUS_PACKET_MAX_LENGTH 256
+#define MODBUS_PACKET_READ_MIN_LENGTH 9
 
+/* *   FUNCTION 01 : Read Multiple Coils    * */
+/* *   FUNCTION 02 : Read Discrete Inputs   * */
+struct s_ModbusReadCoilsPacket
+{
+	unsigned short read_start;
+	unsigned short read_length;
+};
+struct s_ModbusReadCoilsResponsePacket
+{
+	unsigned char byte_length;
+	unsigned char coils[MODBUS_PACKET_MAX_LENGTH - MODBUS_PACKET_READ_MIN_LENGTH];
+};
+
+/* *   FUNCTION 03 : Read Holding Registers   * */
+/* *   FUNCTION 04 : Read  Input  Registers   * */
+struct s_ModbusReadRegistersPacket
+{
+	unsigned short read_start;
+	unsigned short read_length;
+};
+struct s_ModbusReadRegistersResponsePacket
+{
+	unsigned char byte_length;
+	unsigned char registers[MODBUS_PACKET_MAX_LENGTH - MODBUS_PACKET_READ_MIN_LENGTH];
+};
+
+/* *   FUNCTION 15 : Force/Write Multiple Coils   * */
 struct s_ModbusWriteCoilsPacket
 {
 	unsigned short write_start;
@@ -36,18 +64,6 @@ struct s_ModbusWriteCoilsResponsePacket
 	unsigned short write_length;
 };
 
-struct s_ModbusReadCoilsPacket
-{
-	unsigned short read_start;
-	unsigned short read_length;
-};
-#define ModbusReadCoilsResponsePacket_SIZE 9
-struct s_ModbusReadCoilsResponsePacket
-{
-	unsigned char byte_length;
-	unsigned char coils[MODBUS_PACKET_MAX_LENGTH - 9];
-};
-
 
 
 typedef struct s_ModbusPacket
@@ -58,10 +74,12 @@ typedef struct s_ModbusPacket
 	unsigned char u_id;
 	unsigned char f_id;
 	union {
-		struct s_ModbusWriteCoilsPacket write_coils;
-		struct s_ModbusWriteCoilsResponsePacket write_coils_res;
 		struct s_ModbusReadCoilsPacket read_coils;
 		struct s_ModbusReadCoilsResponsePacket read_coils_res;
+		struct s_ModbusReadRegistersPacket read_registers;
+		struct s_ModbusReadRegistersResponsePacket read_registers_res;
+		struct s_ModbusWriteCoilsPacket write_coils;
+		struct s_ModbusWriteCoilsResponsePacket write_coils_res;
 	} data;
 } t_ModbusPacket;
 
